@@ -47,7 +47,7 @@ const server = http.createServer((req, res) => {
   }
 
   //Create user
-  else if (req.method === 'POST' && req.url === '/users') {
+  else if (req.method === 'POST' && (req.url === '/users' || req.url === '/users/')) {
     addControllerUser(req, res);
   } //Update user
   else if (req.method === 'PUT' && req.url?.startsWith('/users/')) {

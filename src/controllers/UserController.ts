@@ -22,8 +22,8 @@ export function addControllerUser(req: http.IncomingMessage, res: http.ServerRes
   });
 
   req.on('end', () => {
-    const newUser: User = JSON.parse(body);
-    user = addUser({ ...newUser, id: uuidv4() });
+    const newUser: User = { id: uuidv4(), ...JSON.parse(body) };
+    user = addUser(newUser);
     res.writeHead(201, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify(user));
   });
