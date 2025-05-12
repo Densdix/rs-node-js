@@ -14,67 +14,73 @@ dotenv.config();
 const PORT = process.env.PORT || 4000;
 
 const server = http.createServer((req, res) => {
-  // Welcome route
-  if (req.method === 'GET' && req.url === '/') {
-    res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify('Welcome to the API!'));
-  }
-
-  //Get all users
-  else if (req.method === 'GET' && (req.url === '/users' || req.url === '/users/')) {
-    res.writeHead(200, { 'Content-Type': 'application/json' });
-    const allUsers = getControllerAllUsers();
-    res.end(JSON.stringify(allUsers));
-  }
-  //Get user by id
-  else if (req.method === 'GET' && req.url?.startsWith('/users/')) {
-    const id = req.url.split('/')[2];
-
-    if (!isValidUUIDv4(id)) {
-      res.writeHead(400, { 'Content-Type': 'text/plain' });
-      res.end('Invalid user ID format');
-      return;
+  try {
+    // Welcome route
+    if (req.method === 'GET' && req.url === '/') {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify('Welcome to the API!'));
     }
 
-    const user = getControllerUserById(id);
-    if (user) {
+    //Get all users
+    else if (req.method === 'GET' && (req.url === '/api/users' || req.url === '/api/users/')) {
       res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify(user));
+      const allUsers = getControllerAllUsers();
+      res.end(JSON.stringify(allUsers));
+    }
+    //Get user by id
+    else if (req.method === 'GET' && req.url?.startsWith('/api/users/')) {
+      const id = req.url.split('/')[3];
+
+      if (!isValidUUIDv4(id)) {
+        res.writeHead(400, { 'Content-Type': 'text/plain' });
+        res.end('Invalid user ID format');
+        return;
+      }
+
+      const user = getControllerUserById(id);
+      if (user) {
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(user));
+      } else {
+        res.writeHead(404, { 'Content-Type': 'text/plain' });
+        res.end('User not found');
+      }
+    }
+
+    //Create user
+    else if (req.method === 'POST' && (req.url === '/api/users' || req.url === '/api/users/')) {
+      addControllerUser(req, res);
+    } //Update user
+    else if (req.method === 'PUT' && req.url?.startsWith('/api/users/')) {
+      const id = req.url.split('/')[3];
+
+      if (!isValidUUIDv4(id)) {
+        res.writeHead(400, { 'Content-Type': 'text/plain' });
+        res.end('Invalid user ID format');
+        return;
+      }
+
+      updateControllerUser(id, req, res);
+    }
+    //Delete user
+    else if (req.method === 'DELETE' && req.url?.startsWith('/api/users/')) {
+      const id = req.url.split('/')[3];
+
+      if (!isValidUUIDv4(id)) {
+        res.writeHead(400, { 'Content-Type': 'text/plain' });
+        res.end('Invalid user ID format');
+        return;
+      }
+
+      deleteControllerUser(id, res);
     } else {
       res.writeHead(404, { 'Content-Type': 'text/plain' });
-      res.end('User not found');
+      res.end('Route not found');
     }
-  }
-
-  //Create user
-  else if (req.method === 'POST' && (req.url === '/users' || req.url === '/users/')) {
-    addControllerUser(req, res);
-  } //Update user
-  else if (req.method === 'PUT' && req.url?.startsWith('/users/')) {
-    const id = req.url.split('/')[2];
-
-    if (!isValidUUIDv4(id)) {
-      res.writeHead(400, { 'Content-Type': 'text/plain' });
-      res.end('Invalid user ID format');
-      return;
-    }
-
-    updateControllerUser(id, req, res);
-  }
-  //Delete user
-  else if (req.method === 'DELETE' && req.url?.startsWith('/users/')) {
-    const id = req.url.split('/')[2];
-
-    if (!isValidUUIDv4(id)) {
-      res.writeHead(400, { 'Content-Type': 'text/plain' });
-      res.end('Invalid user ID format');
-      return;
-    }
-
-    deleteControllerUser(id, res);
-  } else {
-    res.writeHead(404, { 'Content-Type': 'text/plain' });
-    res.end('Route not found');
+  } catch (error) {
+    console.error('Server error:', error);
+    res.writeHead(500, { 'Content-Type': 'text/plain' });
+    res.end('Internal server error');
   }
 });
 

@@ -2,7 +2,7 @@ export interface User {
   id: string;
   age: number;
   username: string;
-  hobbies: [string];
+  hobbies: string[];
 }
 
 let users: User[] = [];
