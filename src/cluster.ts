@@ -2,6 +2,7 @@ import cluster from 'cluster';
 import http from 'http';
 import os from 'os';
 import dotenv from 'dotenv';
+import { createServer } from './server';
 
 dotenv.config();
 
@@ -64,5 +65,9 @@ if (cluster.isPrimary) {
 
   console.log(`Воркер ${process.pid} (ID: ${workerId}) запущен и слушает порт ${workerPort}`);
 
-  import('./server');
+  // Создание и запуск сервера в воркере
+  const server = createServer();
+  server.listen(parseInt(workerPort as string, 10), () => {
+    console.log(`Сервер воркера запущен на http://localhost:${workerPort}/`);
+  });
 }
