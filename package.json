@@ -1,0 +1,41 @@
+{
+  "name": "rs-node",
+  "version": "1.0.0",
+  "description": "task for rss",
+  "main": "dist/index.js",
+  "engines": {
+    "node": ">=22.14.0"
+  },
+  "author": "",
+  "license": "ISC",
+  "scripts": {
+    "build": "webpack",
+    "start": "node dist/bundle.js",
+    "start:dev": "nodemon --exec npx ts-node ./src/server.ts",
+    "start:prod": "npm run build && npm run start",
+    "start:multi": "nodemon --exec npx ts-node ./src/cluster.ts",
+    "lint": "eslint . --ext .ts",
+    "test": "jest"
+  },
+  "devDependencies": {
+    "@types/dotenv": "^8.2.0",
+    "@types/jest": "^29.5.12",
+    "@types/uuid": "^9.0.8",
+    "@typescript-eslint/eslint-plugin": "^6.20.0",
+    "@typescript-eslint/parser": "^6.20.0",
+    "eslint": "^8.56.0",
+    "nodemon": "^3.0.3",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.3.3",
+    "webpack": "^5.90.1",
+    "webpack-cli": "^5.1.4"
+  },
+  "dependencies": {
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.4.1",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.2",
+    "ts-node": "^10.9.2",
+    "uuid": "^9.0.1"
+  }
+}
